@@ -1,0 +1,442 @@
+openapi: 3.0.3
+info:
+  title: LinCard 관련 API 문서
+  version: 0.0.1
+  description: |
+    ## 구현 API
+    - User/Auth
+    - 
+    -
+
+  contact:
+    name: API Question
+    url: http://github.com
+    email: icb1696@gmail.com
+
+servers:
+  - url: "http://{host}:{port}"
+    description: 개발
+    variables:
+      host:
+        default: localhost
+        description: host를 정해주세요
+
+      port:
+        enum:
+          - "8080"
+          - "8081"
+        default: "8080"
+
+tags:
+  - name: 유저 관리
+    description: 유저 관련 API
+  - name: 인증 관리
+    description: 인증 관련 API
+  - name: 화면 요청 모음
+    description: SSR 구현 시 화면 요청 request 모음
+
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        exceptionName:
+          type: string
+          description: 예외 이름
+        message:
+          type: string
+          description: 오류 메시지
+        details:
+          type: object
+          description: 오류 부가 정보
+          properties:
+            additionalProp1:
+              type: string
+            additionalProp2:
+              type: string
+            additionalProp3:
+              type: string
+    SignInRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: 유저 ID
+
+        password:
+          type: string
+          description: 비밀번호
+
+      required: [userId, password]
+
+    LoginRequets:
+      type: object
+      properties:
+        userId:
+          type: string
+        password:
+          type: string
+      required: [userId, password]
+
+    Profile:
+      type: object
+      properties:
+        userId:
+          type: string
+
+        binaryData:
+          type: string
+          format: binary
+
+        introduction:
+          type: string
+
+        data:
+          type: array
+          items:
+            type: object
+
+            properties:
+              propertyName:
+                type: string
+
+              propertyValue:
+                type: string
+
+          #minItems: 0
+          maxItems: 10
+
+      required: [userId]
+
+    Recommend:
+      type: object
+      properties:
+        userId:
+          type: integer
+        recommends:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+
+              url:
+                type: string
+
+              description:
+                type: string
+
+      required: [userId]
+
+    FollowRequest:
+      type: object
+      properties:
+        followingId:
+          type: integer
+      required: [followingId]
+
+paths:
+  /auth/login:
+    get:
+      tags:
+        - 화면 요청 모음
+      summary: 로그인 화면 요청
+      description: 로그인 화면 생성
+
+      responses:
+        "200":
+          description: 로그인 페이지 생성 성공
+
+        "500":
+          description: 로그인 페이지 생성 실패
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      tags:
+        - 인증 관리
+      summary: 로그인 요청
+      description: 로그인 요청 API(Authorized 헤더에 토큰)
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequets"
+
+      responses:
+        "200":
+          description: 로그인 성공
+
+        "401":
+          description: 로그인 실패
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/sign-in:
+    get:
+      tags:
+        - 화면 요청 모음
+      summary: 회원 가입 페이지 요청
+      description: 회원 가입 페이지 요청 API
+
+      responses:
+        "200":
+          description: 회원 가입 페이지 생성 성공
+
+        "500":
+          description: 회원 가입 페이지 생성 실패
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/auth/sign-in:
+    post:
+      tags:
+        - 인증 관리
+      summary: 회원 가입 요청
+      description: 회원 가입 요청 API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInRequest"
+        required: true
+
+      responses:
+        "200":
+          description: 회원 가입 성공
+
+        "401":
+          description: 회원 가입 실패
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /user/{userId}:
+    get:
+      tags:
+        - 화면 요청 모음
+
+      summary: 내 프로필 화면 요청
+      description: 내 프로필 화면 보여주는 API
+
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+            minimum: 1
+          required: true
+
+      responses:
+        "200":
+          description: 내 프로필 화면 생성 성공
+
+        "500":
+          description: 내 프로필 화면 생성 실패
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/user/{userId}:
+    put:
+      tags:
+        - 유저 관리
+
+      summary: 내 프로필 수정
+      description: 내 프로필 수정 API
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+            minimum: 1
+          required: true
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "/components/schemas/Profile"
+
+      responses:
+        "200":
+          description: 프로필 수정 성공
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+
+        "500":
+          description: 서버 에러
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "401":
+          description: 인증 실패 (JWT 만료 시)
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /user/{userId}/recommend:
+    get:
+      tags:
+        - 화면 요청 모음
+      summary: 나의 추천 자료 페이지 요청
+      description: 나의 추천 자료 페이지 요청
+
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+            minimum: 1
+          required: true
+
+      responses:
+        "200":
+          description: 나의 추천 페이지 요청 성공
+
+        "500":
+          description: 나의 추천 페이지 요청 실패
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/user/{userId}/recommend:
+    put:
+      tags:
+        - 유저 관리
+      summary: 나의 추천 수정
+      description: 나의 추천 자료 수정 API
+
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+            minimum: 1
+          required: true
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Recommend"
+
+      responses:
+        "200":
+          description: 나의 추천 페이지 요청 성공
+          # content:
+          #   application/json:
+          #     schema:
+          #       type: object
+          #       properteis:
+
+        "500":
+          description: 나의 추천 페이지 요청 실패
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/auth/sigh-out:
+    post:
+      tags:
+        - 인증 관리
+      summary: 로그아웃 요청
+      description: 로그아웃 요청 API
+
+      responses:
+        "201":
+          description: 로그아웃 성공
+
+        "401":
+          description: 로그아웃 실패
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/user/{userId}/following:
+    get:
+      tags:
+        - 유저 관리
+      summary: 팔로우 목록
+      description: 팔로우한 사람들의 카드 목록 가져오기
+
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+          required: true
+
+      responses:
+        "200":
+          description: 팔로우 목록 요청 성공
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Profile"
+                description: 팔로우한 사용자들의 프로필 목록
+    post:
+      tags:
+        - 유저 관리
+      summary: 팔로우 요청
+      description: 팔로우 요청 API
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+          required: true
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FollowRequest"
+
+      responses:
+        "200":
+          description: 팔로우 요청 성공
+
+    delete:
+      tags:
+        - 유저 관리
+      summary: 언팔로우
+      description: 언팔로우하기
+
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+          required: true
+
+        - name: followingId
+          in: query
+          schema:
+            type: integer
+          required: true
+
+      responses:
+        "200":
+          description: 언팔로우 성공
