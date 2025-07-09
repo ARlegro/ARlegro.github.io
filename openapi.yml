@@ -6,7 +6,7 @@ info:
     ## 구현 API
     - User/Auth
     - 
-    -
+    - 
 
   contact:
     name: API Question
@@ -26,6 +26,7 @@ servers:
           - "8080"
           - "8081"
         default: "8080"
+
 
 tags:
   - name: 유저 관리
@@ -129,6 +130,7 @@ components:
 
       required: [userId]
 
+
     FollowRequest:
       type: object
       properties:
@@ -137,23 +139,42 @@ components:
       required: [followingId]
 
 paths:
+  /:
+    get:
+      tags:
+        - 화면 요청 모음
+      summary: 첫 화면
+      description: 랜덤 유저의 카드 화면을 보여주는 API
+
+      responses:
+        "200":
+          description: 첫 화면 생성 성공
+
+        "500":
+          description: 첫 화면 생성 실패
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
   /auth/login:
     get:
       tags:
         - 화면 요청 모음
       summary: 로그인 화면 요청
-      description: 로그인 화면 생성
+      description : 로그인 화면 생성
 
       responses:
-        "200":
+        '200':
           description: 로그인 페이지 생성 성공
 
-        "500":
+        '500':
           description: 로그인 페이지 생성 실패
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
+
   /api/auth/login:
     post:
       tags:
@@ -165,18 +186,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/LoginRequets"
+              $ref: '#/components/schemas/LoginRequets'
 
       responses:
-        "200":
+        '200':
           description: 로그인 성공
 
-        "401":
+        '401':
           description: 로그인 실패
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
+
 
   /auth/sign-in:
     get:
@@ -186,15 +208,15 @@ paths:
       description: 회원 가입 페이지 요청 API
 
       responses:
-        "200":
+        '200':
           description: 회원 가입 페이지 생성 성공
 
-        "500":
+        '500':
           description: 회원 가입 페이지 생성 실패
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/auth/sign-in:
     post:
@@ -206,24 +228,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SignInRequest"
+              $ref: '#/components/schemas/SignInRequest'
         required: true
 
       responses:
-        "200":
+        '200':
           description: 회원 가입 성공
 
-        "401":
+        '401':
           description: 회원 가입 실패
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
   /user/{userId}:
     get:
       tags:
-        - 화면 요청 모음
+        -  화면 요청 모음
 
       summary: 내 프로필 화면 요청
       description: 내 프로필 화면 보여주는 API
@@ -237,15 +259,15 @@ paths:
           required: true
 
       responses:
-        "200":
+        '200':
           description: 내 프로필 화면 생성 성공
 
-        "500":
+        '500':
           description: 내 프로필 화면 생성 실패
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/user/{userId}:
     put:
@@ -266,30 +288,33 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Profile"
+              $ref: '#/components/schemas/Profile'
+
 
       responses:
-        "200":
+        '200':
           description: 프로필 수정 성공
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Profile"
+                $ref: '#/components/schemas/Profile'
 
-        "500":
+
+        '500':
           description: 서버 에러
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
-        "401":
+
+        '401':
           description: 인증 실패 (JWT 만료 시)
 
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
   /user/{userId}/recommend:
     get:
@@ -306,16 +331,17 @@ paths:
             minimum: 1
           required: true
 
+
       responses:
-        "200":
+        '200':
           description: 나의 추천 페이지 요청 성공
 
-        "500":
+        '500':
           description: 나의 추천 페이지 요청 실패
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/user/{userId}/recommend:
     put:
@@ -332,14 +358,16 @@ paths:
             minimum: 1
           required: true
 
+
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Recommend"
+              $ref: '#/components/schemas/Recommend'
+
 
       responses:
-        "200":
+        '200':
           description: 나의 추천 페이지 요청 성공
           # content:
           #   application/json:
@@ -347,12 +375,15 @@ paths:
           #       type: object
           #       properteis:
 
-        "500":
+        '500':
           description: 나의 추천 페이지 요청 실패
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
+
+
+
 
   /api/auth/sigh-out:
     post:
@@ -362,15 +393,16 @@ paths:
       description: 로그아웃 요청 API
 
       responses:
-        "201":
+        '201':
           description: 로그아웃 성공
 
-        "401":
+        '401':
           description: 로그아웃 실패
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
+
 
   /api/user/{userId}/following:
     get:
@@ -387,14 +419,14 @@ paths:
           required: true
 
       responses:
-        "200":
+        '200':
           description: 팔로우 목록 요청 성공
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Profile"
+                  $ref: '#/components/schemas/Profile'
                 description: 팔로우한 사용자들의 프로필 목록
     post:
       tags:
@@ -402,7 +434,7 @@ paths:
       summary: 팔로우 요청
       description: 팔로우 요청 API
       parameters:
-        - name: userId
+        - name : userId
           in: path
           schema:
             type: integer
@@ -412,11 +444,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/FollowRequest"
+              $ref: '#/components/schemas/FollowRequest'
 
       responses:
-        "200":
+        '200':
           description: 팔로우 요청 성공
+
 
     delete:
       tags:
@@ -438,5 +471,16 @@ paths:
           required: true
 
       responses:
-        "200":
+        '200':
           description: 언팔로우 성공
+
+
+
+
+
+
+
+
+
+
+
