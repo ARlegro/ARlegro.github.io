@@ -154,7 +154,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-
+  /api/auth/login:
     post:
       tags:
         - 인증 관리
@@ -266,7 +266,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "/components/schemas/Profile"
+              $ref: "#/components/schemas/Profile"
 
       responses:
         "200":
